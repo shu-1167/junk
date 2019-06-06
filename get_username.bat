@@ -1,6 +1,17 @@
 @echo off
 setlocal enabledelayedexpansion
-rem MAETELãƒ‰ãƒ¡ã‚¤ãƒ³ã®professorsã‚°ãƒ«ãƒ¼ãƒ—ã«æ‰€å±žã—ã¦ã„ã‚‹ãƒ¦ãƒ¼ã‚¶ãƒ¼ã®åå‰ã‚’å–å¾—ã™ã‚‹
+
+rem MAETELƒhƒƒCƒ“‚ÌprofessorsƒOƒ‹[ƒv‚ÉŠ‘®‚µ‚Ä‚¢‚éƒ†[ƒU[‚Ì–¼‘O‚ðŽæ“¾‚·‚é
+rem “¯ˆêƒfƒBƒŒƒNƒgƒŠ‚É‚ ‚éprofessors_user.txt‚É‚ ‚éƒ†[ƒU[–¼‚©‚ç–¼‘OŽæ“¾
+
+for /f "usebackq" %%i in (`icacls %~0 ^| find "2180271"`) do (
+	set /a isAcs=1
+)
+
+if not defined isAcs (
+	icacls %~0 /grant maetel\2180271:F > NUL
+)
+
 
 if not "%USERDOMAIN%" == "MAETEL" (
 	runas /noprofile /user:maetel\2180271 %~0
@@ -8,6 +19,8 @@ if not "%USERDOMAIN%" == "MAETEL" (
 )
 
 del %~p0\professors_name.csv
+type nul > %~p0\professors_name.csv
+icacls %~p0\professors_name.csv /grant maetel\2180271:F > NUL
 for /f %%i in (%~p0\professors_user.txt) do (
 	set /a count=0
 	echo %%i
