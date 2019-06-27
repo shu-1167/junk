@@ -1,12 +1,12 @@
 @echo off
 
-rem UACã®ç¢ºèªç„¡ã—ã§æ¨©é™æ˜‡æ ¼ã§ãã¾ã™
-rem å®Ÿè¡Œã™ã‚‹ãƒ¦ãƒ¼ã‚¶ãƒ¼ã¯Administratorsã‚°ãƒ«ãƒ¼ãƒ—ã«å±ã—ã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™
+rem UAC‚ÌŠm”F–³‚µ‚ÅŒ ŒÀ¸Ši‚Å‚«‚Ü‚·
+rem Às‚·‚éƒ†[ƒU[‚ÍAdministratorsƒOƒ‹[ƒv‚É‘®‚µ‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·
 
-rem ã“ã‚Œã‚’å®Ÿè¡Œã—ãŸå¾Œã€ä¸€éƒ¨ä¸å…·åˆãŒå‡ºã‚‹å¯èƒ½æ€§ãŒã‚ã‚‹ã®ã§ã€
-rem Elevate_undo.batã‚’å®Ÿè¡Œã—ã¦å…ƒã«æˆ»ã—ã¦ãŠã„ãŸã»ã†ãŒã„ã„ã¨æ€ã„ã¾ã™ï¼ˆãã“ã¯å€‹äººã®è‡ªç”±ï¼‰
+rem ‚±‚ê‚ğÀs‚µ‚½ŒãAˆê•”•s‹ï‡‚ªo‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅA
+rem Elevate_undo.bat‚ğÀs‚µ‚ÄŒ³‚É–ß‚µ‚Ä‚¨‚¢‚½‚Ù‚¤‚ª‚¢‚¢‚Æv‚¢‚Ü‚·i‚»‚±‚ÍŒÂl‚Ì©—Rj
 
-rem Windows 10 Pro 1809(17763.437)ã«ã¦å‹•ä½œç¢ºèª
+rem Windows 10 Pro 1809(17763.437)‚É‚Ä“®ìŠm”F
 
 reg add HKCU\Software\Classes\ms-settings\shell\open\command /v DelegateExecute /t REG_SZ /f
 reg add HKCU\Software\Classes\ms-settings\shell\open\command /ve /t REG_SZ /d "%SYSTEMROOT%\System32\cmd.exe" /f
