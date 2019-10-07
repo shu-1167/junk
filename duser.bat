@@ -2,6 +2,27 @@
 setlocal enabledelayedexpansion
 rem ドメインのユーザーから特定の人物を抽出する
 
+set RUN_USER=2180271
+rem ドメインは大文字のほうがいいかも
+set DOMAIN=MAETEL
+
+for /f "usebackq" %%i in (`icacls %~0 ^| find "%RUN_USER%"`) do (
+	rem 実行ファイルの権限チェック
+	set /a isAcs=1
+)
+
+if not defined isAcs (
+	rem 権限がなければ許可
+	icacls %~0 /grant %DOMAIN%\%RUN_USER%:F > NUL
+)
+
+
+if not "%USERDOMAIN%" == "%DOMAIN%" (
+	rem ドメインユーザーでなければドメインユーザーで再実行
+	runas /noprofile /user:%DOMAIN%\%RUN_USER% %~f0
+	exit /b
+)
+
 rem 名前（性）入力
 set /p name="input name:"
 rem ユーザーIDの頭部分(218)入力
