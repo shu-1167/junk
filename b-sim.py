@@ -1,7 +1,7 @@
 import requests
 # import os
 
-# プロキシの設定(Fiddler用)
+# プロキシの設定
 # os.environ['http_proxy'] = 'http://127.0.0.1:8888'
 # ログイン用メールアドレス
 mailaddr = 'xxx@xxx.xx'
@@ -21,8 +21,9 @@ s.post('http://2019.b-sim.net/shop/login', data=payload)
 # 在庫管理画面
 r1 = s.get('http://2019.b-sim.net/shop/item/stock')
 tr_pos = r1.text.find('</tr>')
+# 売値の位置
 price_pos = r1.text.find('right\">', tr_pos) + 7
-# TODO:</tr>タグごとにループして、陳列数<在庫数のやつだけ編集するようにする
+# データが無くなるまでループ
 while price_pos > 6:
     # 陳列数の位置
     num1_pos = r1.text.find('right\">', price_pos) + 7
@@ -35,6 +36,7 @@ while price_pos > 6:
     if num1 < num2:
         # 商品編集URLの位置
         url_pos = r1.text.find('href=\"', num2_pos) + 6
+        # 商品編集URLの抽出
         url = r1.text[url_pos:r1.text.find('\">', url_pos)]
         r2 = s.get(url)
 
@@ -58,9 +60,10 @@ while price_pos > 6:
         print(num1 + ' => ' + num2)
         # POSTする更新データ
         payload = {'_method': 'PUT', '_token': token, 'id': id, 'name': name, 'price': price, 'show': num2, 'category_id': category_id, 'hold': 0}
-        # 在庫数更新
+        # 商品データ更新
         r3 = s.post('http://2019.b-sim.net/shop/item/stock/update', data=payload)
         print(r3.reason + '\n')
 
     tr_pos = r1.text.find('</tr>', num2_pos)
+    # 次の売値の位置。無い場合は-1+7=6が入る
     price_pos = r1.text.find('right\">', tr_pos) + 7
