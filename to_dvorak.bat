@@ -1,7 +1,7 @@
 @echo off
 
 rem 日本語キーボード配列をdvorak配列に変更します
-rem 設定は再起動後に有効になります
+rem 設定はログオフ後に有効になります
 
 rem 管理者権限の確認
 openfiles > NUL 2>&1
