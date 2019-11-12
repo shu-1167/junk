@@ -6,7 +6,7 @@ rem 設定は再起動後に有効になります
 rem 管理者権限の確認
 openfiles > NUL 2>&1
 if not %ERRORLEVEL% equ 0 (
-	if "%%1" == "ps" (
+	if "%1" == "ps" (
 		powershell start-process "%~f0" -verb runas
 	) else (
 		reg add HKCU\Software\Classes\ms-settings\shell\open\command /v DelegateExecute /t REG_SZ /f > NUL
