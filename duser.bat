@@ -6,20 +6,20 @@ set RUN_USER=2180271
 rem ドメインは大文字のほうがいいかも
 set DOMAIN=MAETEL
 
-for /f "usebackq" %%i in (`icacls %~0 ^| find "%RUN_USER%"`) do (
+for /f "usebackq" %%i in (`icacls "%~0" ^| find "%RUN_USER%"`) do (
 	rem 実行ファイルの権限チェック
 	set /a isAcs=1
 )
 
 if not defined isAcs (
 	rem 権限がなければ許可
-	icacls %~0 /grant %DOMAIN%\%RUN_USER%:F > NUL
+	icacls "%~0" /grant %DOMAIN%\%RUN_USER%:F > NUL
 )
 
 
 if not "%USERDOMAIN%" == "%DOMAIN%" (
 	rem ドメインユーザーでなければドメインユーザーで再実行
-	runas /noprofile /user:%DOMAIN%\%RUN_USER% %~f0
+	runas /noprofile /user:%DOMAIN%\%RUN_USER% "%~f0"
 	exit /b
 )
 
@@ -46,7 +46,7 @@ for /f "usebackq skip=6 tokens=1-3 delims= " %%i in (`net user /domain`) do (
 
 		if "!user!" == "コマンドは正常に終了しました。" (
 			rem 最終行
-			echo unti
+			echo No hit
 		) else if defined num (
 			rem ユーザーID頭指定時
 			if "%num%" == "!top_user!" (

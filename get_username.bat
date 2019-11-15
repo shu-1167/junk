@@ -10,29 +10,29 @@ rem ドメインは大文字のほうがいいかも
 set DOMAIN=MAETEL
 
 
-for /f "usebackq" %%i in (`icacls %~0 ^| find "%RUN_USER%"`) do (
+for /f "usebackq" %%i in (`icacls "%~0" ^| find "%RUN_USER%"`) do (
 	rem 実行ファイルの権限チェック
 	set /a isAcs=1
 )
 
 if not defined isAcs (
 	rem 権限がなければ許可
-	icacls %~0 /grant %DOMAIN%\%RUN_USER%:F > NUL
+	icacls "%~0" /grant %DOMAIN%\%RUN_USER%:F > NUL
 )
 
 
 if not "%USERDOMAIN%" == "%DOMAIN%" (
 	rem ドメインユーザーでなければドメインユーザーで再実行
-	runas /noprofile /user:%DOMAIN%\%RUN_USER% %~f0
+	runas /noprofile /user:%DOMAIN%\%RUN_USER% "%~f0"
 	exit /b
 )
 
 rem 過去ファイルの削除、新ファイルの作成
-del %~p0professors_name.csv
-type nul > %~p0professors_name.csv
-icacls %~p0professors_name.csv /grant %DOMAIN%\%RUN_USER%:F > NUL
+del "%~p0professors_name.csv"
+type nul > "%~p0professors_name.csv"
+icacls "%~p0professors_name.csv" /grant %DOMAIN%\%RUN_USER%:F > NUL
 
-for /f %%i in (%~p0professors_user.txt) do (
+for /f %%i in ("%~p0professors_user.txt") do (
 	rem ユーザー数分ループ
 	set /a count=0
 	echo %%i
@@ -40,7 +40,7 @@ for /f %%i in (%~p0professors_user.txt) do (
 		set /a count=!count!+1
 		if !count! EQU 1 (
 			rem 名前部分のみ抽出
-			echo %%i,%%j,%%k>>%~p0professors_name.csv
+			echo %%i,%%j,%%k>>"%~p0professors_name.csv"
 		)
 	)
 )
