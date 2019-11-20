@@ -1,4 +1,5 @@
 import requests
+# no module named 'requests' が出たら pip install requests
 # import os
 
 # プロキシの設定
@@ -33,7 +34,7 @@ while price_pos > 6:
     num2_pos = r1.text.find('right\">', num1_pos) + 7
     # 在庫数の抽出
     num2 = r1.text[num2_pos:r1.text.find('<', num2_pos)]
-    if num1 < num2:
+    if int(num1) < int(num2):
         # 商品編集URLの位置
         url_pos = r1.text.find('href=\"', num2_pos) + 6
         # 商品編集URLの抽出
@@ -58,10 +59,19 @@ while price_pos > 6:
 
         print('在庫ID:' + id + "  " + name)
         print(num1 + ' => ' + num2)
+
         # POSTする更新データ
-        payload = {'_method': 'PUT', '_token': token, 'id': id, 'name': name, 'price': price, 'show': num2, 'category_id': category_id, 'hold': 0}
+        payload = {'_method': 'PUT',
+                   '_token': token,
+                   'id': id, 'name': name,
+                   'price': price,
+                   'show': num2,
+                   'category_id': category_id,
+                   'hold': 0}
+
         # 商品データ更新
-        r3 = s.post('http://2019.b-sim.net/shop/item/stock/update', data=payload)
+        r3 = s.post('http://2019.b-sim.net/shop/item/stock/update',
+                    data=payload)
         print(r3.reason + '\n')
 
     tr_pos = r1.text.find('</tr>', num2_pos)
