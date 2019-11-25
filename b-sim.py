@@ -130,14 +130,16 @@ if should_display:
 if should_stock:
     # 入荷処理
     # 商品一覧辞書作成
-    # {key:{name:商品名, stock:在庫数, target:目標数(line:161),
-    #       thres:閾値(line:162), diff:差分(注文数)}}
+    # {key:{name:商品名, stock:在庫数, target:目標数,
+    #       thres:閾値, diff:差分(注文数)}}
     data = dict()
     tr_pos = r1.text.find('</tr>')
     # 売値の位置
     price_pos = r1.text.find('right\">', tr_pos) + 7
     # データが無くなるまでループ
     while price_pos > 6:
+        # 売値の抽出
+        price = r1.text[price_pos:r1.text.find('<', price_pos)]
         # 在庫IDの位置
         ident_pos = r1.text.find('<td>', tr_pos) + 4
         # 商品IDの位置
@@ -158,8 +160,27 @@ if should_stock:
         data[ident] = dict()
         data[ident]['stock'] = int(num2)
         data[ident]['name'] = name
-        data[ident]['target'] = 10
-        data[ident]['thres'] = 3
+        # 売値を卸値に変換
+        price = int(price) // 2
+        # 卸値に応じて目標数と閾値を設定
+        if price <= 5000:
+            # 5000円以下
+            # 閾値(これ以下になったら注文する)
+            data[ident]['thres'] = 6
+            # 目標値(この数になるように注文する)
+            data[ident]['target'] = 12
+        elif price <= 10000:
+            # 10000円以下
+            data[ident]['thres'] = 4
+            data[ident]['target'] = 8
+        elif price <= 20000:
+            # 20000円以下
+            data[ident]['thres'] = 3
+            data[ident]['target'] = 5
+        elif price > 20000:
+            # 20001円以上
+            data[ident]['thres'] = 2
+            data[ident]['target'] = 4
 
         tr_pos = r1.text.find('</tr>', num2_pos)
         # 次の売値の位置。無い場合は-1+7=6が入る
@@ -220,7 +241,7 @@ if should_stock:
     for key in data.keys():
         # 目標値と在庫の差分を計算
         data[key]['diff'] = data[key]['target'] - data[key]['stock']
-        if data[key]['diff'] >= data[key]['thres']:
+        if data[key]['stock'] <= data[key]['thres']:
             payload['id[]'].append(int(key))
             payload['num[]'].append(data[key]['diff'])
 
