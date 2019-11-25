@@ -245,21 +245,19 @@ if should_stock:
             payload['id[]'].append(int(key))
             payload['num[]'].append(data[key]['diff'])
 
-    if len(payload['id[]']) <= 0:
-        # payloadが空(注文する商品がない)場合、終了
-        print('仕入れが必要な商品がありません')
-        quit()
-
     # カートに入れる
     s.post(URL + 'shop/item/order/add', data=payload)
     while True:
+        if len(payload['id[]']) <= 0:
+            # payloadが空(注文する商品がない)場合、終了
+            print('仕入れが必要な商品がありません')
+            quit()
+
+        # 出力するデータのdict
+        ordersheet = dict()
         # 編集処理用の無限ループ
         # 清算ポチ1回目
         r1 = s.post(URL + 'shop/item/order/confirm', data=payload)
-
-        print('\n以下の商品を注文します\n')
-        print(' 商品ID | 注文数 |\t小計\t|\t商品名')
-        print('--------+--------+--------------+-----------------------------')
 
         tr_pos = r1.text.find('</tr>')
         # 番号の位置
@@ -279,13 +277,12 @@ if should_stock:
             # 小計の位置
             sub_pos = r1.text.find('right\">', order_pos) + 7
             # 小計の抽出
-            sub = r1.text[sub_pos:r1.text.find('<', sub_pos)]
+            sub = r1.text[sub_pos:r1.text.find('円', sub_pos)]
 
             # 送信時と応答時の数量が一致しているか
             if data[num]['diff'] == int(order):
-                # 確認出力
-                print('  ' + num + '\t|   ' + order +
-                      '\t |   ' + sub + '\t|  ' + data[num]['name'])
+                # 出力用データを構築
+                ordersheet[num] = int(sub)
             else:
                 # 一致しなかった。仕様変更orバグの可能性あり
                 print('\n注文時と確認応答の数量が一致していない商品がありました')
@@ -297,6 +294,13 @@ if should_stock:
             # 次の番号の位置。無い場合は-1+4=3が入る
             num_pos = r1.text.find('<td>', tr_pos) + 4
 
+        # 出力処理
+        print('\n以下の商品を注文します\n')
+        print(' 商品ID | 注文数 |     小計\t|\t商品名')
+        print('--------+--------+--------------+-----------------------------')
+        for k, v in sorted(ordersheet.items(), key=lambda x: x[1]):
+            print('  ' + k + '\t|   ' + str(data[k]['diff']) +
+                  '\t |   ' + str(v) + '円\t|  ' + data[k]['name'])
         print('--------------------------------------------------------------')
         # 商品代金小計の位置
         sub_pos = r1.text.find('right\">', tr_pos) + 7
