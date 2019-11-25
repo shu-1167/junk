@@ -309,8 +309,12 @@ if should_stock:
                 break
             elif ans.strip().lower() == "e":
                 # 'E'or'e'の場合、編集
-                product_id = input('商品ID: ')
-                count = input('個数:')
+                product_id = input('商品ID: ').strip()
+                count = input('個数:').strip()
+                # 入力された値が数値か
+                if not product_id.isdecimal() or not count.isdecimal():
+                    print("数字のみ入力可能です")
+                    continue
                 # 在庫管理にある商品か
                 try:
                     data[product_id]
