@@ -193,6 +193,25 @@ if should_stock:
     href_pos = r1.text.find('href=\"', tr1_pos) + 6
     # 注文履歴データが無くなるまでループ
     while href_pos > 5:
+        # 一番下のページ切り替えボタンまで来たか
+        if '<li>' in r1.text[tr1_pos:href_pos]:
+            # nextの位置
+            next_pos = r1.text.find('next', href_pos)
+            # 次ページがあるか
+            if int(next_pos) > 0:
+                # 次ページURLの位置
+                url_pos = r1.text.rfind(URL, 0, next_pos)
+                # 次ページURLの抽出
+                url = r1.text[url_pos:r1.text.find('" ', url_pos)]
+                # 次ページへ移動
+                r1 = s.get(url)
+                tr1_pos = r1.text.find('</tr>')
+                # 注文履歴詳細ページのURLの位置
+                href_pos = r1.text.find('href=\"', tr1_pos) + 6
+            else:
+                # 次ページが無い(全部見た)
+                break
+
         # 状態の前、注文内容の最後の位置
         a_pos = r1.text.find('</a>', href_pos)
         # 状態の始端位置
