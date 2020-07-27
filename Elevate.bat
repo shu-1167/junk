@@ -8,6 +8,7 @@ rem Elevate_undo.batを実行して元に戻しておいたほうがいいと思います（そこは個人の
 
 rem Windows 10 Pro 1809(17763.437)にて動作確認
 rem Windows 10 Pro 1903(18362.418)でも動作確認
+rem Windows 10 Pro 1909(18363.900)でも動作確認
 
 reg add HKCU\Software\Classes\ms-settings\shell\open\command /v DelegateExecute /t REG_SZ /f
 reg add HKCU\Software\Classes\ms-settings\shell\open\command /ve /t REG_SZ /d "%SYSTEMROOT%\System32\cmd.exe" /f
